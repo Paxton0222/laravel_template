@@ -2,12 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Requests\Traits\ResponseMessage;
+use Diglactic\Breadcrumbs\Breadcrumbs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
+    use ResponseMessage;
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -30,14 +34,67 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
+            'breadcrumbs' => Breadcrumbs::generate(),
+            'error_messages' => $this->frontendMessages(),
+            'csrf_token' => csrf_token(),
+            'menu' => [
+                [
+                    'href' => 'index',
+                    'name' => '首頁',
+                    'icon' => 'home',
+                ],
+                [
+                    'href' => 'dashboard',
+                    'name' => '後台首頁',
+                    'icon' => 'monitor',
+                ],
+                [
+                    'href' => 'profile.edit',
+                    'name' => '帳戶設定',
+                    'icon' => 'Person',
+                ],
+                [
+                    'name' => '用戶管理',
+                    'icon' => 'manage_accounts',
+                    'hide' => false,
+                    'sub' => [
+                        [
+                            'href' => 'user.edit',
+                            'name' => '用戶列表',
+                            'icon' => 'groups',
+                            'hide' => false,
+                        ],
+                    ],
+                ],
+                [
+                    'name' => '系統資訊',
+                    'hide' => false,
+                    'icon' => 'monitoring',
+                    'sub' => [
+                        [
+                            'name' => 'Horizon',
+                            'hide' => false,
+                            'href' => 'system-monitor.horizon',
+                            'icon' => 'work',
+                        ],
+                        [
+                            'name' => 'Telescope',
+                            'hide' => false,
+                            'href' => 'system-monitor.telescope',
+                            'icon' => 'analytics',
+                        ],
+                    ],
+                ],
             ],
-            'ziggy' => fn () => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
+            'auth' => [
+                'user' => $user,
+                'isLogin' => Auth::check(),
+                'canLogin' => Route::has('login'),
+                'canRegister' => Route::has('register'),
             ],
         ];
     }

@@ -1,17 +1,36 @@
-import { Config } from 'ziggy-js';
+import { Config } from "ziggy-js"
+import { menuLinksInterface } from "@/types/menu"
+import { User } from "@/types/modal"
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
+export interface ErrorMessages {
+    unique: string
+    exists: string
+    required: string
+}
+
+export type ErrorDataRules = "unique" | "exists" | "required"
+
+export interface ErrorData {
+    attr: string
+    input: string
+    rule: ErrorDataRules
 }
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
+    breadcrumbs: {
+        title: string
+        url: string | null
+    }[]
+    menu: menuLinksInterface[]
+    csrf_token: string
+    error_messages: ErrorMessages
     auth: {
-        user: User;
-    };
-    ziggy: Config & { location: string };
-};
+        user: User
+        isLogin: boolean
+        canLogin: boolean
+        canRegister: boolean
+    }
+    ziggy: Config & { location: string }
+}

@@ -1,52 +1,36 @@
-<script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head } from '@inertiajs/vue3';
+<script lang="ts" setup>
+import DeleteUserForm from "./Partials/DeleteUserForm.vue"
+import UpdatePasswordForm from "./Partials/UpdatePasswordForm.vue"
+import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm.vue"
+import { Head } from "@inertiajs/vue3"
+import BaseLayout from "@/Layouts/BaseLayout.vue"
+import Card from "@/Components/Card.vue"
 
 defineProps<{
-    mustVerifyEmail?: boolean;
-    status?: string;
-}>();
+    mustVerifyEmail?: boolean
+    status?: string
+}>()
 </script>
 
 <template>
-    <Head title="Profile" />
-
-    <AuthenticatedLayout>
+    <BaseLayout>
         <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                Profile
-            </h2>
+            <Head title="編輯用戶資料" />
         </template>
+        <div class="grid gap-6 lg:grid-cols-2">
+            <Card>
+                <UpdateProfileInformationForm
+                    :must-verify-email="mustVerifyEmail"
+                    :status="status"
+                />
+            </Card>
+            <Card>
+                <UpdatePasswordForm />
+            </Card>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
-
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
-
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
-            </div>
+            <Card>
+                <DeleteUserForm />
+            </Card>
         </div>
-    </AuthenticatedLayout>
+    </BaseLayout>
 </template>

@@ -1,0 +1,22 @@
+<?php
+/** @noinspection TraitsPropertiesConflictsInspection
+ * @noinspection UnknownInspectionInspection
+ */
+
+namespace App\Repositories;
+
+use App\Models\{{ model_name }};
+use App\Repositories\Interfaces\CrudByIdRepositoryInterface;
+use App\Repositories\Traits\CrudByIdRepository;
+
+class {{ model_name }}Repository implements CrudByIdRepositoryInterface
+{
+    use CrudByIdRepository;
+
+    private {{ model_name }}|string $model;
+
+    public function __construct()
+    {
+        $this->initModel({{ model_name }}::class);
+    }
+}

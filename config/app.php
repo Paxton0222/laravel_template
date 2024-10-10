@@ -101,7 +101,7 @@ return [
 
     'previous_keys' => [
         ...array_filter(
-            explode(',', env('APP_PREVIOUS_KEYS', ''))
+            explode(',', env('APP_PREVIOUS_KEYS', '')),
         ),
     ],
 
@@ -122,5 +122,7 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
+    'admin_emails' => env('ADMIN_EMAILS'),
+    'horizon_gate_emails' => env('HORIZON_GATE_EMAILS', ''),
+    'telescope_emails' => env('TELESCOPE_EMAILS', ''),
 ];

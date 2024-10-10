@@ -1,56 +1,55 @@
-<script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+<script lang="ts" setup>
+import InputError from "@/Components/Form/Components/InputError.vue"
+import InputLabel from "@/Components/Form/Components/InputLabel.vue"
+import PrimaryButton from "@/Components/Button/PrimaryButton.vue"
+import TextInput from "@/Components/Form/Components/Input.vue"
+import { useForm } from "@inertiajs/vue3"
+import { ref } from "vue"
 
-const passwordInput = ref<HTMLInputElement | null>(null);
-const currentPasswordInput = ref<HTMLInputElement | null>(null);
+const passwordInput = ref<HTMLInputElement | null>(null)
+const currentPasswordInput = ref<HTMLInputElement | null>(null)
 
 const form = useForm({
-    current_password: '',
-    password: '',
-    password_confirmation: '',
-});
+    current_password: "",
+    password: "",
+    password_confirmation: "",
+})
 
 const updatePassword = () => {
-    form.put(route('password.update'), {
+    form.put(route("password.update"), {
         preserveScroll: true,
         onSuccess: () => {
-            form.reset();
+            form.reset()
         },
         onError: () => {
             if (form.errors.password) {
-                form.reset('password', 'password_confirmation');
-                passwordInput.value?.focus();
+                form.reset("password", "password_confirmation")
+                passwordInput.value?.focus()
             }
             if (form.errors.current_password) {
-                form.reset('current_password');
-                currentPasswordInput.value?.focus();
+                form.reset("current_password")
+                currentPasswordInput.value?.focus()
             }
         },
-    });
-};
+    })
+}
 </script>
 
 <template>
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Update Password
+                更新密碼
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Ensure your account is using a long, random password to stay
-                secure.
+                確保帳號使用的密碼足夠長，以此來保護你的帳號
             </p>
         </header>
 
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
+        <form class="mt-6 space-y-6" @submit.prevent="updatePassword">
             <div>
-                <InputLabel for="current_password" value="Current Password" />
+                <InputLabel for="current_password" value="原本的密碼" />
 
                 <TextInput
                     id="current_password"
@@ -59,6 +58,7 @@ const updatePassword = () => {
                     type="password"
                     class="mt-1 block w-full"
                     autocomplete="current-password"
+                    :class="[{ 'input-error': form.errors.current_password }]"
                 />
 
                 <InputError
@@ -68,7 +68,7 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <InputLabel for="password" value="New Password" />
+                <InputLabel for="password" value="新密碼" />
 
                 <TextInput
                     id="password"
@@ -77,16 +77,14 @@ const updatePassword = () => {
                     type="password"
                     class="mt-1 block w-full"
                     autocomplete="new-password"
+                    :class="[{ 'input-error': form.errors.password }]"
                 />
 
                 <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
             <div>
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
+                <InputLabel for="password_confirmation" value="確認新密碼" />
 
                 <TextInput
                     id="password_confirmation"
@@ -94,6 +92,9 @@ const updatePassword = () => {
                     type="password"
                     class="mt-1 block w-full"
                     autocomplete="new-password"
+                    :class="[
+                        { 'input-error': form.errors.password_confirmation },
+                    ]"
                 />
 
                 <InputError
@@ -103,7 +104,9 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">
+                    保存
+                </PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

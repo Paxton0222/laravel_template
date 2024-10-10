@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Requests\Api\{{ model_name }};
+
+use App\Http\Requests\Api\ApiResponse;
+use App\Http\Requests\Interfaces\CrudPutRequestInterface;
+use Illuminate\Foundation\Http\FormRequest;
+
+class ApiPut{{ model_name }}UpdateRequest extends FormRequest implements CrudPutRequestInterface
+{
+    use ApiResponse;
+
+    public function rules(): array
+    {
+        return [
+            'id' => 'required|exists:{{ model }},id',
+        ];
+    }
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+}
