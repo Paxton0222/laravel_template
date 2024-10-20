@@ -63,6 +63,11 @@ class User extends Authenticatable
         return Permission::whereIn('id', $this->role->perm_ids)->get();
     }
 
+    public function isSuperUser(): bool
+    {
+        return $this->id === 1 || $this->role_id === 1;
+    }
+
     /**
      * 是否有該權限
      */

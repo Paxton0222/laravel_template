@@ -20,3 +20,7 @@ export interface UserColumns extends Timestamps {
 export type User = Partial<AutoIncrement> &
     Partial<UserFillable> &
     Partial<UserColumns>
+
+
+export interface RoleFillable {}
+export type Role = Partial<AutoIncrement> & Partial<RoleFillable>

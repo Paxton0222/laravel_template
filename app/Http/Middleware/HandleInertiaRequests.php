@@ -36,8 +36,9 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-
+        $super_user = $user && !$user->isSuperUser();
         $account_list = $user && !$user->hasPermission(PermissionEnum::ACCOUNT_LIST->value);
+        $role_list = $user && !$user->hasPermission(PermissionEnum::ROLE_LIST->value);
 
         return [
             ...parent::share($request),
@@ -71,22 +72,28 @@ class HandleInertiaRequests extends Middleware
                             'icon' => 'groups',
                             'hide' => $account_list,
                         ],
+                        [
+                            'href' => 'role.edit',
+                            'name' => '角色列表',
+                            'icon' => 'group_add',
+                            'hide' => $role_list,
+                        ],
                     ],
                 ],
                 [
                     'name' => '系統資訊',
-                    'hide' => false,
+                    'hide' => $super_user,
                     'icon' => 'monitoring',
                     'sub' => [
                         [
                             'name' => 'Horizon',
-                            'hide' => false,
+                            'hide' => $super_user,
                             'href' => 'system-monitor.horizon',
                             'icon' => 'work',
                         ],
                         [
                             'name' => 'Telescope',
-                            'hide' => false,
+                            'hide' => $super_user,
                             'href' => 'system-monitor.telescope',
                             'icon' => 'analytics',
                         ],

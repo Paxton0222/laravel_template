@@ -2,7 +2,7 @@
 import BaseLayout from "@/Layouts/BaseLayout.vue"
 import { PageResponseWithData, PageSearch } from "@/types/pagination"
 import { Head } from "@inertiajs/vue3"
-import { {{ model_name }} } from "@/types/model"
+import { Role } from "@/types/model"
 import PaginateTable from "@/Components/Table/PaginateTable.vue"
 import { onMounted, Ref, ref } from "vue"
 import DangerButton from "@/Components/Button/DangerButton.vue"
@@ -11,12 +11,12 @@ import SearchInput from "@/Components/Table/SearchInput.vue"
 import SortThead from "@/Components/Table/SortThead.vue"
 import { useSearchInput, useSortThead } from "@/pagination"
 
-const props = defineProps<PageResponseWithData<{{ model_name }}>>()
+const props = defineProps<PageResponseWithData<Role>>()
 const routes = {
-    create: "{{ route }}.create",
-    update: "{{ route }}.update",
-    delete: "{{ route }}.delete",
-    deleteMulti: "api.{{ route }}.delete",
+    create: "role.create",
+    update: "role.update",
+    delete: "role.delete",
+    deleteMulti: "api.role.delete",
 }
 const forms = {
     create: {
@@ -43,7 +43,7 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
 <template>
     <BaseLayout>
         <template #header>
-            <Head title="{{ model_name }}列表" />
+            <Head title="Role列表" />
         </template>
         <div class="h-full p-8 bg-base-200 rounded-xl">
             <PaginateTable
@@ -82,7 +82,7 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                     <SortThead column="id" v-model="sortId" @update-status="useSetIdSort">ID</SortThead>
                     <!--
                     <th>
-                        {{ model_name }} (**填寫上欄位名稱**) &nbsp;
+                        Role (**填寫上欄位名稱**) &nbsp;
                         <span class="badge badge-neutral badge-sm"
                             >雙擊文字編輯</span
                         >
@@ -133,7 +133,7 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                         </DangerButton>
                     </td>
                 </template>
-                <template #createModalTitle> 建立{{ model_name }} </template>
+                <template #createModalTitle> 建立Role </template>
                 <template #createModalForm="{ form }">
                     <!-- 自定義欄位模板，可複製修改，有要填寫的地方會標注像這樣 -> ** 標註 ** -->
                     <!--
@@ -160,10 +160,10 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                     -->
                 </template>
                 <template #deleteModalTitle="{ form }">
-                    確定要刪除{{ model_name }}ID: {{ form.id }}?
+                    確定要刪除RoleID: {{ form.id }}?
                 </template>
                 <template #deleteMultiModalTitle>
-                    確定要刪除所選的全部{{ model_name }}?
+                    確定要刪除所選的全部Role?
                 </template>
             </PaginateTable>
         </div>

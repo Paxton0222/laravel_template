@@ -61,7 +61,7 @@ class PageMaker extends Command
         $stub = str_replace(['{{ model_name }}', '{{ route }}'], [$model_name, $route], $stub);
 
         // 將最終的檔案內容寫入到指定路徑
-        $path = resource_path('js/types/modal.ts');
+        $path = resource_path('js/types/model.ts');
 
         File::append($path, $stub);
 

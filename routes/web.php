@@ -2,7 +2,7 @@
 
 use App\Enum\PermissionEnum;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\rolesController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SystemMonitor;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +29,17 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [UserController::class, 'create'])->name('user.create');
             Route::put('/', [UserController::class, 'update'])->name('user.update');
             Route::delete('/', [UserController::class, 'delete'])->name('user.delete');
+        });
+    });
+
+    Route::prefix('role')->group(function () {
+        Route::middleware('permission:' . PermissionEnum::ROLE_LIST->value)->group(function () {
+            Route::get('/', [RoleController::class, 'edit'])->name('role.edit');
+        });
+        Route::middleware('permission:'.PermissionEnum::ROLE_EDIT->value)->group(function () {
+            Route::post('/', [RoleController::class, 'create'])->name('role.create');
+            Route::put('/', [RoleController::class, 'update'])->name('role.update');
+            Route::delete('/', [RoleController::class, 'delete'])->name('role.delete');
         });
     });
 

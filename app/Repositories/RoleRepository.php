@@ -5,16 +5,16 @@
 
 namespace App\Repositories;
 
-use App\Models\{{ model_name }};
+use App\Models\Role;
 
-class {{ model_name }}Repository
+class RoleRepository implements CrudByIdRepositoryInterface
 {
     use CrudByIdRepository;
 
-    private {{ model_name }}|string $model;
+    private Role|string $model;
 
     public function __construct()
     {
-        $this->initModel({{ model_name }}::class);
+        $this->initModel(Role::class);
     }
 }
