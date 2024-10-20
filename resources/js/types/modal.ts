@@ -17,9 +17,6 @@ export interface UserColumns extends Timestamps {
     email_verified_at: string | null
 }
 
-export interface UserTransform {}
-
 export type User = Partial<AutoIncrement> &
     Partial<UserFillable> &
-    Partial<UserColumns> &
-    Partial<UserTransform>
+    Partial<UserColumns>
