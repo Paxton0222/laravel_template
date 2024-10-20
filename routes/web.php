@@ -1,14 +1,10 @@
 <?php
 
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\PermissionGroupController;
+use App\Enum\PermissionEnum;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\rolesController;
 use App\Http\Controllers\SystemMonitor;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UserRoleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,10 +22,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('user')->group(function () {
-        Route::get('/', [UserController::class, 'edit'])->name('user.edit');
-        Route::post('/', [UserController::class, 'create'])->name('user.create');
-        Route::put('/', [UserController::class, 'update'])->name('user.update');
-        Route::delete('/', [UserController::class, 'delete'])->name('user.delete');
+        Route::middleware('permission:' . PermissionEnum::ACCOUNT_LIST->value)->group(function () {
+            Route::get('/', [UserController::class, 'edit'])->name('user.edit');
+        });
+        Route::middleware('permission:' . PermissionEnum::ACCOUNT_EDIT->value)->group(function () {
+            Route::post('/', [UserController::class, 'create'])->name('user.create');
+            Route::put('/', [UserController::class, 'update'])->name('user.update');
+            Route::delete('/', [UserController::class, 'delete'])->name('user.delete');
+        });
     });
 
     Route::prefix('system-monitor')->group(static function () {
@@ -38,4 +38,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

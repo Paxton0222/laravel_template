@@ -1,5 +1,6 @@
 services:
     laravel.test:
+        container_name: app
         build:
             context: './docker/dev'
             dockerfile: Dockerfile
@@ -9,7 +10,6 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
-            - '${APP_PORT:-80}:${DOCKER_APP_PORT:-80}'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
@@ -71,6 +71,28 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    nginx:
+        container_name: nginx
+        image: nginx:alpine3.20
+        privileged: true
+        volumes:
+            - ./docker/dev/conf.d:/etc/nginx/conf.d
+        env_file:
+            - .env
+        ports:
+            - '${APP_PORT:-80}:80'
+        networks:
+            - sail
+        restart: unless-stopped
+        healthcheck:
+            test:
+                - CMD
+                - curl
+                - http://localhost
+            interval: 10s
+            retries: 10
+            start_period: 60s
+            timeout: 10s
 networks:
     sail:
         driver: bridge

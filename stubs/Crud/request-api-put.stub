@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\{{ model_name }};
 
-use App\Http\Requests\Api\ApiResponse;
+use App\Http\Requests\Traits\ApiResponse;
 use App\Http\Requests\Interfaces\CrudPutRequestInterface;
 use Illuminate\Foundation\Http\FormRequest;
 

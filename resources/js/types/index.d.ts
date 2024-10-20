@@ -1,6 +1,6 @@
 import { Config } from "ziggy-js"
 import { menuLinksInterface } from "@/types/menu"
-import { User } from "@/types/modal"
+import { User } from "@/types/model"
 
 export interface ErrorMessages {
     unique: string

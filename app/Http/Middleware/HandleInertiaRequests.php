@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enum\PermissionEnum;
 use App\Http\Requests\Traits\ResponseMessage;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Illuminate\Http\Request;
@@ -36,6 +37,8 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
+        $account_list = $user && !$user->hasPermission(PermissionEnum::ACCOUNT_LIST->value);
+
         return [
             ...parent::share($request),
             'breadcrumbs' => Breadcrumbs::generate(),
@@ -60,13 +63,13 @@ class HandleInertiaRequests extends Middleware
                 [
                     'name' => '用戶管理',
                     'icon' => 'manage_accounts',
-                    'hide' => false,
+                    'hide' => $account_list,
                     'sub' => [
                         [
                             'href' => 'user.edit',
                             'name' => '用戶列表',
                             'icon' => 'groups',
-                            'hide' => false,
+                            'hide' => $account_list,
                         ],
                     ],
                 ],

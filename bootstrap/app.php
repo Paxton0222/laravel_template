@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\ApiAuthenticate;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\PermissionApiCheck;
+use App\Http\Middleware\PermissionCheck;
 use App\Http\Middleware\RedirectUrlMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -48,6 +50,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ApiAuthenticate::class,
+        ]);
+        $middleware->alias([
+            'permission' => PermissionCheck::class,
+            'permission_api' => PermissionApiCheck::class,
         ]);
     })
     ->withExceptions(static function (Exceptions $exceptions) {

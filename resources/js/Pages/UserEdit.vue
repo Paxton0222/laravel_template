@@ -2,7 +2,7 @@
 import BaseLayout from "@/Layouts/BaseLayout.vue"
 import { PageResponseWithData } from "@/types/pagination"
 import { Head } from "@inertiajs/vue3"
-import { User } from "@/types/modal"
+import { User } from "@/types/model"
 import PaginateTable from "@/Components/Table/PaginateTable.vue"
 import { computed, ref } from "vue"
 import Input from "@/Components/Form/Components/Input.vue"

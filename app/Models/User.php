@@ -3,10 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enum\PermissionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
+use LaravelIdea\Helper\App\Models\_IH_Permission_C;
 
 class User extends Authenticatable
 {
@@ -22,6 +27,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -45,5 +51,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id')->withDefault();
+    }
+
+    public function permissions(): Collection
+    {
+        return Permission::whereIn('id', $this->role->perm_ids)->get();
+    }
+
+    /**
+     * 是否有該權限
+     */
+    public function hasPermission(string $perm_key): bool
+    {
+        if ($this->id === 1 || $this->role_id === 1) { // 超級管理員
+            return true;
+        }
+        return $this->role->permission()->pluck('key')->search($perm_key) !== false;
     }
 }
