@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Data\PermissionGroupData;
 use App\Services\CrudByIdService;
 use App\Services\CrudByIdServiceInterface;
 use App\Repositories\RoleRepository;

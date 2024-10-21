@@ -57,4 +57,14 @@ Route::middleware('auth:web,api')->group(function () {
                 ->name('api.role.delete');
         });
     });
+    Route::prefix('permission')->group(function () {
+        Route::middleware('permission_api:' . PermissionEnum::ROLE_LIST->value)->group(function () {
+            Route::get('/', [PermissionApiController::class, 'get'])
+                ->name('api.permission.get')
+            ;
+            Route::get('/all', [PermissionApiController::class, 'getPage'])
+                ->name('api.permission.get.all')
+            ;
+        });
+    });
 });

@@ -5,5 +5,5 @@ const model = defineModel({
 </script>
 
 <template>
-    <input v-model="model" class="checkbox checkbox-sm" type="checkbox" />
+    <input v-model="model" class="checkbox checkbox-sm" type="checkbox" :checked="model" />
 </template>

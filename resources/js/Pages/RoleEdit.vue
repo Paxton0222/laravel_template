@@ -1,17 +1,25 @@
 <script lang="ts" setup>
 import BaseLayout from "@/Layouts/BaseLayout.vue"
-import { PageResponseWithData, PageSearch } from "@/types/pagination"
+import { PageResponseWithData } from "@/types/pagination"
 import { Head } from "@inertiajs/vue3"
-import { Role } from "@/types/model"
+import { Permission, PermissionGroup, Role } from "@/types/model"
 import PaginateTable from "@/Components/Table/PaginateTable.vue"
-import { onMounted, Ref, ref } from "vue"
+import { computed, ref } from "vue"
 import DangerButton from "@/Components/Button/DangerButton.vue"
 import Checkbox from "@/Components/Form/Components/Checkbox.vue"
 import SearchInput from "@/Components/Table/SearchInput.vue"
 import SortThead from "@/Components/Table/SortThead.vue"
 import { useSearchInput, useSortThead } from "@/pagination"
+import TableEditText from "@/Components/Table/TableEditText.vue"
+import InputLabel from "@/Components/Form/Components/InputLabel.vue"
+import InputError from "@/Components/Form/Components/InputError.vue"
+import { errorMessageTransform } from "@/helper"
+import PrimaryButton from "@/Components/Button/PrimaryButton.vue"
+import PermissionGroupForm from "@/Components/Form/PermissionGroupForm.vue"
 
-const props = defineProps<PageResponseWithData<Role>>()
+const props = defineProps<PageResponseWithData<Role> & {
+    permission_groups: PermissionGroup[]
+}>()
 const routes = {
     create: "role.create",
     update: "role.update",
@@ -39,6 +47,8 @@ const {
     setQuery: setQueryId,
 } = useSearchInput(table, "id")
 const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
+const { sort: sortName, useSetSort: useSetNameSort } = useSortThead(table, "name")
+const { sort: sortDesc, useSetSort: useSetDescSort } = useSortThead(table, "desc")
 </script>
 <template>
     <BaseLayout>
@@ -79,15 +89,9 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                 </template>
                 <template #thead>
                     <!-- 這裡顯示欄位名稱資料，有要填寫的地方會標注像這樣 -> ** 標註 ** -->
-                    <SortThead column="id" v-model="sortId" @update-status="useSetIdSort">ID</SortThead>
-                    <!--
-                    <th>
-                        Role (**填寫上欄位名稱**) &nbsp;
-                        <span class="badge badge-neutral badge-sm"
-                            >雙擊文字編輯</span
-                        >
-                    </th>
-                    -->
+                    <SortThead v-model="sortId" column="id" @update-status="useSetIdSort">ID</SortThead>
+                    <SortThead v-model="sortName" column="name" @update-status="useSetNameSort">名稱</SortThead>
+                    <SortThead v-model="sortDesc" column="desc" @update-status="useSetDescSort">描述</SortThead>
                     <th>操作</th>
                 </template>
                 <template
@@ -110,19 +114,30 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                         </label>
                     </th>
                     <td>{{ form.id }}</td>
-                    <!-- 自定義欄位模板，可複製修改，有要填寫的地方會標注像這樣 -> ** 標註 ** -->
-                    <!--
                     <td>
-
                         <TableEditText
-                            v-model="form.**填寫上欄位**"
+                            v-model="form.name"
                             class="w-full"
                             @input-updated="update_submit(form)"
                         />
                     </td>
-                    -->
+                    <td>
+                        <TableEditText
+                            v-model="form.desc"
+                            class="w-full"
+                            @input-updated="update_submit(form)"
+                        />
+                    </td>
+                    <td>
+                        <PrimaryButton
+                            class="btn-outline btn-sm"
+                        >
+                            編輯
+                        </PrimaryButton>
+                    </td>
                     <td>
                         <DangerButton
+                            v-show="form.id !== 1"
                             class="btn-outline btn-sm"
                             @click="
                                 delete_modal?.modal?.showModal(),
@@ -133,18 +148,16 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                         </DangerButton>
                     </td>
                 </template>
-                <template #createModalTitle> 建立Role </template>
+                <template #createModalTitle> 建立角色</template>
                 <template #createModalForm="{ form }">
-                    <!-- 自定義欄位模板，可複製修改，有要填寫的地方會標注像這樣 -> ** 標註 ** -->
-                    <!--
-                    <InputLabel for="** 填寫上欄位ID **" value="** 填寫上欄位名稱 **" />
+                    <InputLabel for="name" value="名稱" />
                     <Input
-                        id="** 填寫上欄位ID (要和 label 一樣) **"
-                        v-model="form.** 填寫上欄位 **!"
+                        id="name"
+                        v-model="form.name!"
                         class="mt-1 block input input-bordered w-full"
                         :class="[
                             {
-                                'input-error': form.errors.** 填寫上欄位 **,
+                                'input-error': form.errors.name,
                             },
                         ]"
                         @keydown.enter="form.submit"
@@ -152,18 +165,53 @@ const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
                     <InputError
                         :message="
                             computed(() => {
-                                return errorMessageTransform(form.errors.** 填寫上欄位 **!)
+                                return errorMessageTransform(form.errors.name!)
                             })
                         "
                         class="mt-2"
                     />
-                    -->
+
+                    <InputLabel for="desc" value="描述" />
+                    <Input
+                        id="desc"
+                        v-model="form.desc!"
+                        class="mt-1 block input input-bordered w-full"
+                        :class="[
+                            {
+                                'input-error': form.errors.desc,
+                            },
+                        ]"
+                        @keydown.enter="form.submit"
+                    />
+                    <InputError
+                        :message="
+                            computed(() => {
+                                return errorMessageTransform(form.errors.desc!)
+                            })
+                        "
+                        class="mt-2"
+                    />
+
+                    <div class="overflow-x-auto">
+                        <table class="table table-xs">
+                            <!-- head -->
+                            <thead>
+                            <tr>
+                                <th>權限群組</th>
+                                <th>權限名稱</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <PermissionGroupForm :permission_groups="permission_groups" />
+                            </tbody>
+                        </table>
+                    </div>
                 </template>
                 <template #deleteModalTitle="{ form }">
-                    確定要刪除RoleID: {{ form.id }}?
+                    確定要刪除角色ID: {{ form.id }}?
                 </template>
                 <template #deleteMultiModalTitle>
-                    確定要刪除所選的全部Role?
+                    確定要刪除所選的全部角色?
                 </template>
             </PaginateTable>
         </div>

@@ -7,6 +7,8 @@ use App\Http\Requests\Role\DeleteRoleDeleteRequest;
 use App\Http\Requests\Role\GetRoleEditRequest;
 use App\Http\Requests\Role\PostRoleCreateRequest;
 use App\Http\Requests\Role\PutRoleUpdateRequest;
+use App\Models\Role;
+use App\Services\PermissionService;
 use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -23,10 +25,12 @@ class RoleController extends Controller
     }
 
     private RoleService $RoleService;
+    private PermissionService $permissionService;
 
-    public function __construct(RoleService $RoleService)
+    public function __construct(RoleService $RoleService, PermissionService $permissionService)
     {
         $this->RoleService = $RoleService;
+        $this->permissionService = $permissionService;
         $this->initService($this->RoleService);
     }
 
@@ -44,6 +48,9 @@ class RoleController extends Controller
             ],
         ];
         $result = array_merge($result, $pageInfo->toArray());
+        $result = array_merge($result, [
+            'permission_groups' => $this->permissionService->permission_groups(),
+        ]);
 
         return Inertia::render('RoleEdit', $result);
     }

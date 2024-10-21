@@ -22,5 +22,21 @@ export type User = Partial<AutoIncrement> &
     Partial<UserColumns>
 
 
-export interface RoleFillable {}
+export interface RoleFillable {
+    name: string
+    desc: string
+    perm_ids: number[]
+}
 export type Role = Partial<AutoIncrement> & Partial<RoleFillable>
+export interface PermissionFillable {
+    parent_id: number
+    name: string
+    key: string
+}
+export type Permission = Partial<AutoIncrement> & Partial<PermissionFillable>
+
+export interface PermissionGroup
+{
+    group: Permission
+    permissions: Permission[]
+}

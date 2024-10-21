@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:' . PermissionEnum::ROLE_LIST->value)->group(function () {
             Route::get('/', [RoleController::class, 'edit'])->name('role.edit');
         });
-        Route::middleware('permission:'.PermissionEnum::ROLE_EDIT->value)->group(function () {
+        Route::middleware('permission:' . PermissionEnum::ROLE_EDIT->value)->group(function () {
             Route::post('/', [RoleController::class, 'create'])->name('role.create');
             Route::put('/', [RoleController::class, 'update'])->name('role.update');
             Route::delete('/', [RoleController::class, 'delete'])->name('role.delete');
