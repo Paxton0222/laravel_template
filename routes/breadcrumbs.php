@@ -46,6 +46,10 @@ Breadcrumbs::for('user.edit', static function (BreadcrumbTrail $trail) {
     $trail->parent('user');
     $trail->push('用戶列表', route('user.edit', request()->query(), false));
 });
+Breadcrumbs::for('role.edit', static function (BreadcrumbTrail $trail) {
+    $trail->parent('user');
+    $trail->push('角色列表', route('role.edit', request()->query(), false));
+});
 
 Breadcrumbs::for('system', static function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
