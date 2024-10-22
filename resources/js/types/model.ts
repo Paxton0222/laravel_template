@@ -11,15 +11,21 @@ export interface UserFillable {
     name: string
     email: string
     password: string
+    role_id: number
 }
 
 export interface UserColumns extends Timestamps {
     email_verified_at: string | null
 }
 
+export interface UserRelation {
+    role: Role
+}
+
 export type User = Partial<AutoIncrement> &
     Partial<UserFillable> &
-    Partial<UserColumns>
+    Partial<UserColumns> &
+    Partial<UserRelation>
 
 export interface RoleFillable {
     name: string

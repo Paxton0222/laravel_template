@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Requests\Api\ApiResponse;
+use App\Http\Requests\Traits\ApiResponse;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,13 +21,8 @@ class ApiAuthenticate
      */
     public function handle(Request $request, Closure $next): \Inertia\Response|JsonResponse
     {
-        if (!Auth::guard('api')->check()) {
-            return response()->json()->setStatusCode(Response::HTTP_UNAUTHORIZED);
-        }
-        if (!Auth::guard('web')->check()) {
-            return Inertia::render('Error', [
-                'status' => Response::HTTP_UNAUTHORIZED,
-            ]);
+        if (! Auth::guard('api')->check() && ! Auth::guard('web')->check()) {
+            $this->failedAuthorization();
         }
 
         return $next($request);

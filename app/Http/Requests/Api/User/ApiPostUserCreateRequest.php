@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\User;
 
 use App\Http\Requests\Interfaces\CrudPostRequestInterface;
 use App\Http\Requests\Traits\ApiResponse;
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,6 +28,10 @@ class ApiPostUserCreateRequest extends FormRequest implements CrudPostRequestInt
                 Rule::unique('users', 'email'),
             ],
             'password' => 'required|string|max:255',
+            'role_id' => [
+                'required',
+                Rule::exists(Role::class, 'id'),
+            ],
         ];
     }
 

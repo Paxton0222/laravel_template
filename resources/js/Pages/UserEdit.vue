@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import BaseLayout from "@/Layouts/BaseLayout.vue"
 import { PageResponseWithData } from "@/types/pagination"
-import { Head } from "@inertiajs/vue3"
-import { User } from "@/types/model"
+import { Head, InertiaForm, router, useForm } from "@inertiajs/vue3"
+import { Role, User } from "@/types/model"
 import PaginateTable from "@/Components/Table/PaginateTable.vue"
 import { computed, ref } from "vue"
 import Input from "@/Components/Form/Components/Input.vue"
@@ -15,9 +15,17 @@ import SearchInput from "@/Components/Table/SearchInput.vue"
 import { errorMessageTransform, useLocaleTimeAgo } from "@/helper"
 import SortThead from "@/Components/Table/SortThead.vue"
 import { useDateFormat } from "@vueuse/core"
-import { useSearchInput, useSortThead } from "@/pagination"
+import { useSearchInput, useSearchSelect, useSortThead } from "@/pagination"
+import SearchSelect from "@/Components/Table/SearchSelect.vue"
+import SecondaryButton from "@/Components/Button/SecondaryButton.vue"
+import { notifyType, useFlashNotifyGlobalState } from "@/globalState"
+import Modal from "@/Components/Modal.vue"
+import PrimaryButton from "@/Components/Button/PrimaryButton.vue"
+import PermissionGroupForm from "@/Components/Form/PermissionGroupForm.vue"
 
-const props = defineProps<PageResponseWithData<User>>()
+const props = defineProps<PageResponseWithData<User> & {
+    roles: Role[]
+}>()
 const routes = {
     create: "user.create",
     update: "user.update",
@@ -29,11 +37,13 @@ const forms = {
         name: "",
         email: "",
         password: "",
+        role_id: undefined,
     },
     update: {
         id: undefined,
         name: undefined,
         email: undefined,
+        role_id: undefined,
     },
     delete: {
         id: undefined,
@@ -62,22 +72,33 @@ const {
 const { sort: sortId, useSetSort: useSetIdSort } = useSortThead(table, "id")
 const { sort: sortName, useSetSort: useSetNameSort } = useSortThead(
     table,
-    "name"
+    "name",
 )
 const { sort: sortEmail, useSetSort: useSetEmailSort } = useSortThead(
     table,
-    "email"
+    "email",
 )
 const { sort: sortCreatedAt, useSetSort: useSetCreatedAtSort } = useSortThead(
     table,
-    "created_at"
+    "created_at",
 )
 const { sort: sortUpdatedAt, useSetSort: useSetUpdatedAtSort } = useSortThead(
     table,
-    "updated_at"
+    "updated_at",
 )
 const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
     useSortThead(table, "email_verified_at")
+
+const { page: rolePage, updateSearch: updateRoleSearch } =
+    useSearchSelect("api.role.get.all")
+
+const edit_role_modal = ref<InstanceType<typeof Modal> | null>(null)
+const update_role_form: InertiaForm<User> = useForm({
+    id: 0,
+    name: "",
+    email: "",
+    role_id: 0,
+})
 </script>
 <template>
     <BaseLayout>
@@ -127,7 +148,7 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                         v-model="sortId"
                         column="id"
                         @update-status="useSetIdSort"
-                        >ID
+                    >ID
                     </SortThead>
                     <SortThead
                         v-model="sortName"
@@ -136,7 +157,7 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                     >
                         用戶名 (name) &nbsp;
                         <span class="badge badge-neutral badge-sm"
-                            >雙擊文字編輯</span
+                        >雙擊文字編輯</span
                         >
                     </SortThead>
                     <SortThead
@@ -146,7 +167,7 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                     >
                         Email &nbsp;
                         <span class="badge badge-neutral badge-sm"
-                            >雙擊文字編輯</span
+                        >雙擊文字編輯</span
                         >
                     </SortThead>
                     <SortThead
@@ -156,6 +177,9 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                     >
                         Email驗證狀態
                     </SortThead>
+                    <td>
+                        用戶角色
+                    </td>
                     <!--                    <th>角色</th>-->
                     <SortThead
                         v-model="sortCreatedAt"
@@ -231,42 +255,32 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                             未驗證
                         </span>
                     </td>
-                    <!--                    <td>-->
-                    <!--                        <div-->
-                    <!--                            class="[&>span]:text-nowrap flex flex-col justify-center h-full gap-2"-->
-                    <!--                        >-->
-                    <!--                            <template v-if="form.super_user">-->
-                    <!--                                <span class="badge badge-sm badge-error">-->
-                    <!--                                    超級用戶-->
-                    <!--                                </span>-->
-                    <!--                            </template>-->
-                    <!--                            <template-->
-                    <!--                                v-for="(role, _index) in form.roles"-->
-                    <!--                                :key="_index"-->
-                    <!--                            >-->
-                    <!--                                <span-->
-                    <!--                                    class="badge badge-sm badge-neutral"-->
-                    <!--                                    @click="-->
-                    <!--                                        router.get(-->
-                    <!--                                            route('role.edit', {-->
-                    <!--                                                search: [-->
-                    <!--                                                    ['id', '=', `${role.id}`],-->
-                    <!--                                                ],-->
-                    <!--                                                searchSession: {-->
-                    <!--                                                    id: {-->
-                    <!--                                                        value: role.id,-->
-                    <!--                                                        index: 0,-->
-                    <!--                                                    },-->
-                    <!--                                                },-->
-                    <!--                                            })-->
-                    <!--                                        )-->
-                    <!--                                    "-->
-                    <!--                                >-->
-                    <!--                                    {{ role.name }}-->
-                    <!--                                </span>-->
-                    <!--                            </template>-->
-                    <!--                        </div>-->
-                    <!--                    </td>-->
+                    <td>
+                        <div
+                            class="[&>span]:text-nowrap flex flex-col justify-center h-full gap-2"
+                        >
+                            <span
+                                class="badge badge-sm badge-neutral"
+                                @click="
+                                        router.get(
+                                            route('role.edit', {
+                                                search: [
+                                                    ['id', '=', `${form.role!.id}`],
+                                                ],
+                                                searchSession: {
+                                                    id: {
+                                                        value: form.role!.id,
+                                                        index: 0,
+                                                    },
+                                                },
+                                            })
+                                        )
+                                    "
+                            >
+                                    {{ form.role!.name }}
+                                </span>
+                        </div>
+                    </td>
                     <td>
                         {{ useLocaleTimeAgo(form.created_at!) }}
                     </td>
@@ -285,21 +299,21 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                     </td>
                     -->
                     <td>
-                        <div class="join lg:join-horizontal">
-                            <!--                            <SecondaryButton-->
-                            <!--                                class="btn-outline btn-sm join-item"-->
-                            <!--                                @click="-->
-                            <!--                                    router.visit(-->
-                            <!--                                        route('user_role.edit.with.user', {-->
-                            <!--                                            user_id: form.id,-->
-                            <!--                                        })-->
-                            <!--                                    )-->
-                            <!--                                "-->
-                            <!--                            >-->
-                            <!--                                編輯角色-->
-                            <!--                            </SecondaryButton>-->
-
-                            <!--                                v-if="!form.super_user"-->
+                        <div
+                            v-if="form.id !== 1"
+                            class="join lg:join-horizontal">
+                            <SecondaryButton
+                                class="btn-outline btn-sm join-item"
+                                @click="() => {
+                                    edit_role_modal?.modal?.showModal()
+                                    update_role_form.id = form.id
+                                    update_role_form.name = form.name
+                                    update_role_form.email = form.email
+                                    update_role_form.role_id = form.role_id
+                                }"
+                            >
+                                編輯角色
+                            </SecondaryButton>
                             <DangerButton
                                 class="btn-outline btn-sm join-item"
                                 @click="
@@ -314,7 +328,40 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                 </template>
                 <template #createModalTitle> 建立用戶</template>
                 <template #createModalForm="{ form }">
-                    <!-- 自定義欄位模板，可複製修改，有要填寫的地方會標注像這樣 -> ** 標註 ** -->
+                    <InputLabel for="createRole" value="角色" />
+                    <SearchSelect
+                        id="createRoleId"
+                        v-model="form.role_id"
+                        column="id"
+                        display-column="name"
+                        operator="like"
+                        :auto-complete-result="rolePage.data"
+                        @update-auto-complete-search="updateRoleSearch"
+                        @update-data="
+                            (keyword) => {
+                                if (typeof keyword === 'number') {
+                                    form.role_id = keyword
+                                }
+                            }
+                        "
+                        :input-class="[
+                            {
+                                'input-error': !!form.errors.role_id,
+                            },
+                        ]"
+                        exposeColumn="name"
+                        :height="300"
+                    />
+                    <InputError
+                        :message="
+                            computed(() => {
+                                return errorMessageTransform(
+                                    form.errors.role_id!
+                                )
+                            })
+                        "
+                        class="mt-2"
+                    />
                     <InputLabel for="createName" value="用戶名" />
                     <Input
                         id="createName"
@@ -371,6 +418,7 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                             },
                         ]"
                         @keydown.enter="form.submit"
+                        autocomplete="off"
                     />
                     <InputError
                         :message="
@@ -382,28 +430,6 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                         "
                         class="mt-2"
                     />
-                    <!--
-                    <InputLabel for="** 填寫上欄位ID **" value="** 填寫上欄位名稱 **" />
-                    <Input
-                        id="** 填寫上欄位ID (要和 label 一樣) **"
-                        v-model="form.** 填寫上欄位 **!"
-                        class="mt-1 block input input-bordered w-full"
-                        :class="[
-                            {
-                                'input-error': form.errors.** 填寫上欄位 **,
-                            },
-                        ]"
-                        @keydown.enter="form.submit"
-                    />
-                    <InputError
-                        :message="
-                            computed(() => {
-                                return errorMessageTransform(form.errors.** 填寫上欄位 **!)
-                            })
-                        "
-                        class="mt-2"
-                    />
-                    -->
                 </template>
                 <template #deleteModalTitle="{ form }">
                     確定要刪除用戶ID: {{ form.id }}?
@@ -412,6 +438,39 @@ const { sort: sortEmailVerifiedAt, useSetSort: useSetEmailVerifiedAtSort } =
                     確定要刪除所選的全部用戶?
                 </template>
             </PaginateTable>
+            <Modal ref="edit_role_modal">
+                <template #title>
+                    編輯 {{ update_role_form.name }} 的角色
+                </template>
+                <select class="select select-bordered w-full" v-model="update_role_form.role_id">
+                    <option v-for="(role, i) in roles" :key="i" :value="role.id">
+                        {{ role.name }}
+                    </option>
+                </select>
+                <template #action>
+                    <PrimaryButton
+                        @click="
+                            () => {
+                                update_role_form.put(
+                                    route('user.update'),
+                                    {
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            useFlashNotifyGlobalState().pushFlashNotify(
+                                                notifyType.success,
+                                                '儲存成功'
+                                            )
+                                        },
+                                    }
+                                )
+                                edit_role_modal?.modal?.close()
+                            }
+                        "
+                    >
+                        儲存
+                    </PrimaryButton>
+                </template>
+            </Modal>
         </div>
     </BaseLayout>
 </template>

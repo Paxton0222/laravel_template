@@ -8,6 +8,8 @@ use App\Http\Requests\User\DeleteUserDeleteRequest;
 use App\Http\Requests\User\GetUserEditRequest;
 use App\Http\Requests\User\PostUserCreateRequest;
 use App\Http\Requests\User\PutUserUpdateRequest;
+use App\Models\User;
+use App\Services\RoleService;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -43,7 +45,8 @@ class UserController extends Controller
                 'asc' => $asc,
                 'desc' => $desc,
             ],
-            'data' => $pageInfo->items()
+            'data' => $pageInfo->items(),
+            'roles' => resolve(RoleService::class)->all(),
         ];
 
         return Inertia::render('UserEdit', $result);

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use App\Http\Requests\Traits\ResponseMessage;
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,6 +27,10 @@ class PostUserCreateRequest extends FormRequest
                 Rule::unique('users', 'email'),
             ],
             'password' => 'required|string|max:255',
+            'role_id' => [
+                'required',
+                Rule::exists(Role::class, 'id'),
+            ],
         ];
     }
 

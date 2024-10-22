@@ -15,6 +15,7 @@ import {
     PageDataType,
     PageSearchOperator,
 } from "@/types/pagination"
+import string from "async-validator/dist-types/validator/string"
 
 // eslint-disable-next-line vue/require-prop-types
 const model: ModelRef<string | number | undefined> = defineModel({
@@ -28,7 +29,7 @@ const props = withDefaults(
         displayColumn: keyof PageDataType
         operator: PageSearchOperator
         height: number
-        inputClass: string[]
+        inputClass: Record<string, boolean>[]
         id: string
     }>(),
     {

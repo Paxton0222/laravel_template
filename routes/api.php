@@ -1,16 +1,9 @@
 <?php
 
 use App\Enum\PermissionEnum;
-use App\Http\Controllers\Api\GroupApiController;
 use App\Http\Controllers\Api\PermissionApiController;
-use App\Http\Controllers\Api\PermissionGroupApiController;
 use App\Http\Controllers\Api\RoleApiController;
-use App\Http\Controllers\Api\RolePermissionApiController;
-use App\Http\Controllers\Api\rolesApiController;
 use App\Http\Controllers\Api\UserApiController;
-use App\Http\Controllers\Api\UserRoleApiController;
-use App\Http\Controllers\TaiwanGeoController;
-use App\Http\Controllers\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,11 +11,15 @@ Route::prefix('users')->group(function () {
     Route::post('/', [UserApiController::class, 'create'])
         ->name('api.users.create');
 });
-
 Route::middleware('auth:web,api')->group(function () {
     // 查看自己是誰
     Route::get('/user', static function (Request $request) {
-        return $request->user();
+        return $request->user() ? [
+            'status' => true,
+            'user' => $request->user(),
+        ] : [
+            'status' => false
+        ];
     });
     Route::prefix('users')->group(function () {
         Route::middleware('permission_api:' . PermissionEnum::ACCOUNT_LIST->value)->group(function () {
