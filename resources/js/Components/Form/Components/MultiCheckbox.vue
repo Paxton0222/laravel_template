@@ -3,8 +3,7 @@ import { computed, ModelRef, onMounted, Ref, ref, watch } from "vue"
 
 type status = 0 | 1 | -1
 
-// eslint-disable-next-line vue/require-prop-types
-const model: ModelRef<boolean[]> = defineModel({ required: false, default: [] })
+const model = defineModel<boolean[]>({ required: false, default: [] })
 
 const checkbox: Ref<HTMLInputElement | null> = ref(null)
 // 檢查現在 checkbox 狀態

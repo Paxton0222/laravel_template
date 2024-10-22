@@ -1,7 +1,7 @@
-import { User } from "@/types/model"
+import { Role, User } from "@/types/model"
 
 // 定義可以分頁的 Data Type
-export type PageDataType = Partial<User>
+export type PageDataType = Partial<User> & Partial<Role>
 
 export type PageSearch = string
 export type PageSearchOperator = "=" | "!=" | ">" | "<" | ">=" | "<=" | "like"

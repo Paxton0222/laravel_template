@@ -36,6 +36,10 @@ class PermissionService implements CrudByIdServiceInterface
                 $permissionGroup->permissions[] = $permission;
             }
         }
-        return collect($result)->toArray();
+        $array_result = [];
+        collect($result)->each(function (PermissionGroupData $permission) use (&$array_result) {
+            $array_result[] = $permission;
+        });
+        return $array_result;
     }
 }
