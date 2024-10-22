@@ -17,7 +17,7 @@ class PermissionApiCheck
     public function handle(Request $request, Closure $next, $perm_key): Response
     {
         if (! $request->user()->hasPermission($perm_key)) {
-            response()->setStatusCode(Response::HTTP_UNAUTHORIZED)->json([
+            return response()->setStatusCode(Response::HTTP_UNAUTHORIZED)->json([
                 'status' => false,
                 'message' => '禁止訪問',
             ]);
