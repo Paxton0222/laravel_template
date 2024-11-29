@@ -13,11 +13,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminUser = new User;
-        $adminUser->role_id = 1;
-        $adminUser->name = 'admin';
-        $adminUser->password = Hash::make('qazxsw1234');
-        $adminUser->email = 'admin@laravel.com';
-        $adminUser->save();
+        User::create([
+           'role_id' => 1,
+            'name' => 'admin',
+            'password' => Hash::make('1234'),
+            'email' => 'admin@dev.co',
+        ]);
     }
 }
