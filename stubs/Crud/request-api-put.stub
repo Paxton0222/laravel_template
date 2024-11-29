@@ -3,10 +3,9 @@
 namespace App\Http\Requests\Api\{{ model_name }};
 
 use App\Http\Requests\Traits\ApiResponse;
-use App\Http\Requests\Interfaces\CrudPutRequestInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApiPut{{ model_name }}UpdateRequest extends FormRequest implements CrudPutRequestInterface
+class ApiPut{{ model_name }}UpdateRequest extends FormRequest
 {
     use ApiResponse;
 

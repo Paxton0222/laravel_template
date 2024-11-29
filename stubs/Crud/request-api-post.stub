@@ -3,10 +3,9 @@
 namespace App\Http\Requests\Api\{{ model_name }};
 
 use App\Http\Requests\Traits\ApiResponse;
-use App\Http\Requests\Interfaces\CrudPostRequestInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApiPost{{ model_name }}CreateRequest extends FormRequest implements CrudPostRequestInterface
+class ApiPost{{ model_name }}CreateRequest extends FormRequest
 {
     use ApiResponse;
 

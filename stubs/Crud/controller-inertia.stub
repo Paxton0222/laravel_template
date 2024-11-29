@@ -43,7 +43,7 @@ class {{ model_name }}Controller extends Controller
                 'desc' => $desc,
             ],
         ];
-        $result = array_merge($result, $pageInfo->toArray());
+        $result = array_merge($result, $pageInfo);
 
         return Inertia::render('{{ model_name }}Edit', $result);
     }

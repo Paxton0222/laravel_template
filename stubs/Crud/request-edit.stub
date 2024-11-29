@@ -4,7 +4,6 @@ namespace App\Http\Requests\{{ model_name }};
 
 use App\Http\Requests\Traits\Page;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class Get{{ model_name }}EditRequest extends FormRequest
 {

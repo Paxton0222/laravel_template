@@ -25,6 +25,6 @@ class DevSetup extends Command
      */
     public function handle(): void
     {
-        system('php artisan db:wipe && php artisan migrate && php artisan db:seed');
+        system('php artisan db:wipe && php artisan migrate && php artisan db:seed && php artisan cache:clear');
     }
 }

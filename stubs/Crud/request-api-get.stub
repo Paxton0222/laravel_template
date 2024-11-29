@@ -3,10 +3,9 @@
 namespace App\Http\Requests\Api\{{ model_name }};
 
 use App\Http\Requests\Traits\ApiResponse;
-use App\Http\Requests\Interfaces\CrudGetRequestInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApiGet{{ model_name }}ByIdRequest extends FormRequest implements CrudGetRequestInterface
+class ApiGet{{ model_name }}ByIdRequest extends FormRequest
 {
     use ApiResponse;
 

@@ -2,15 +2,10 @@
 
 namespace App\Http\Requests\{{ model_name }};
 
-use App\Http\Requests\Traits\ResponseMessage;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class Put{{ model_name }}UpdateRequest extends FormRequest
 {
-    use ResponseMessage;
-
     public function rules(): array
     {
         return [

@@ -2,14 +2,10 @@
 
 namespace App\Http\Requests\{{ model_name }};
 
-use App\Http\Requests\Traits\ResponseMessage;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 
 class Delete{{ model_name }}DeleteRequest extends FormRequest
 {
-    use ResponseMessage;
-
     public function rules(): array
     {
         return [

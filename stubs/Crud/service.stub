@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Services\CrudByIdService;
-use App\Services\CrudByIdServiceInterface;
 use App\Repositories\{{ model_name }}Repository;
 
 class {{ model_name }}Service implements CrudByIdServiceInterface
