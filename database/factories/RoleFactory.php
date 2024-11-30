@@ -18,8 +18,8 @@ class RoleFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->name(),
-            'desc' => $this->faker->word(),
+            'name' => Str::random(5),
+            'desc' => Str::random(10),
             'perm_ids' => [],
         ];
     }
